@@ -18,7 +18,11 @@ gem uninstall mysql2
 gem install mysql2 -- --with-ldflags=-L/opt/homebrew/lib
 bundle
 
+# Create local db
+bin/rails db:create
+
 # Enjoy!
+rails s
 ```
 
 ## Requirements
