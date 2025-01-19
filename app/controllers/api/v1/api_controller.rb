@@ -8,13 +8,13 @@ module Api
       # ----------------------------------------------
       def authorize_request
         # TODO: get Authorization header from request
-        # and check if it is valid. 
+        # and check if it is valid.
 
         # TODO: if not valid, return 401 Unauthorized
         # Else assign @current_user
 
         @current_user = nil
-      end 
+      end
     end
   end
 end
