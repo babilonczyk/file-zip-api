@@ -1,6 +1,8 @@
 module Api
   module V1
     class ApiController < ApplicationController
+      protect_from_forgery with: :null_session
+
       before_action :authorize_request
 
       attr_reader :current_user

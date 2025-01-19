@@ -12,6 +12,8 @@ gem 'mysql2', '~> 0.5'
 gem 'prefixed_ids'
 gem 'puma', '>= 5.0'
 gem 'rails', '~> 7.1.5', '>= 7.1.5.1'
+gem 'rswag-api'
+gem 'rswag-ui'
 gem 'rubyzip'
 gem 'sprockets-rails'
 gem 'stimulus-rails'
@@ -25,6 +27,7 @@ group :development, :test do
   gem 'guard-rspec', '~> 4.7.3'
   gem 'pry', '~> 0.15.0'
   gem 'rspec-rails', '~> 7.1'
+  gem 'rswag-specs'
   gem 'timecop', '~> 0.9.10'
 end
 
