@@ -43,7 +43,9 @@ module Api
         temp_path = Rails.root.join('tmp', filename)
 
         ActiveRecord::Base.transaction do
-          UploadsManagement::ZipFileService.new.call(file: file, path: temp_path, password: password)
+          ret = UploadsManagement::ZipFileService.new.call(file: file, path: temp_path, password: password)
+
+          return render json: ret, status: :unprocessable_entity if ret[:error].present?
 
           upload = Upload.new
           upload.name = filename
