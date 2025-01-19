@@ -6,6 +6,8 @@ class User < ApplicationRecord
 
   before_create :initialize_jti
 
+  has_many :uploads, dependent: :destroy
+
   def regenerate_jti
     new_jti = SecureRandom.uuid
     update!(jti: new_jti)

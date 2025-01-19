@@ -131,6 +131,7 @@ GEM
       guard (~> 2.1)
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
+    hashids (1.0.6)
     i18n (1.14.6)
       concurrent-ruby (~> 1.0)
     importmap-rails (2.1.0)
@@ -194,6 +195,9 @@ GEM
     parser (3.3.7.0)
       ast (~> 2.4.1)
       racc
+    prefixed_ids (1.8.1)
+      hashids (>= 1.0.0, < 2.0.0)
+      rails (>= 6.0.0)
     pry (0.15.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -339,6 +343,7 @@ DEPENDENCIES
   jbuilder
   jwt
   mysql2 (~> 0.5)
+  prefixed_ids
   pry (~> 0.15.0)
   puma (>= 5.0)
   rails (~> 7.1.5, >= 7.1.5.1)
