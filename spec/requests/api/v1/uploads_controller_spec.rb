@@ -51,6 +51,80 @@ RSpec.describe Api::V1::UploadsController, type: :request do
 
   # -------------------------------------------------------------------------------
   describe 'POST /api/v1/files' do
+    let(:file) { fixture_file_upload('spec/fixtures/files/sample.txt', 'text/plain') }
+    let(:name) { 'test_zip' }
+    let(:params) { { name:, file: } }
+    let(:max_file_size) { Api::V1::UploadsController::MAX_FILE_SIZE_MB }
+    let(:max_files_per_user) { Api::V1::UploadsController::MAX_FILES_PER_USER }
+
+    let(:headers) { { 'Authorization': "Bearer #{jwt}" } }
+
+    subject { post '/api/v1/files', params: params, headers: headers, as: :multipart }
+
+    # -------------------------------------------------------------------------------
+    context 'when user is authenticated' do
+      # -------------------------------------------------------------------------------
+      context 'when the request is valid' do
+        it 'creates a zip file and returns its details' do
+          subject
+
+          expect(response).to have_http_status(:created)
+
+          json = JSON.parse(response.body)
+          expect(json['name']).to eq("#{name}.zip")
+          expect(json['url']).not_to be_nil
+          expect(json['password']).not_to be_nil
+        end
+      end
+
+      # -------------------------------------------------------------------------------
+      context 'when the file is missing' do
+        let(:file) { nil }
+
+        it 'returns an error' do
+          subject
+
+          expect(response).to have_http_status(:not_found)
+          json = JSON.parse(response.body)
+          expect(json['error']).to eq('File not found')
+        end
+      end
+
+      # -------------------------------------------------------------------------------
+      context 'when the name is missing' do
+        let(:name) { nil }
+
+        it 'returns an error' do
+          subject
+
+          expect(response).to have_http_status(:bad_request)
+          json = JSON.parse(response.body)
+          expect(json['error']).to eq("Name can't be blank")
+        end
+      end
+
+      # -------------------------------------------------------------------------------
+      context 'when the user exceeds the file upload limit' do
+        before do
+          create_list(:upload, max_files_per_user, user: user)
+        end
+
+        it 'returns an error' do
+          subject
+
+          expect(response).to have_http_status(:unprocessable_entity)
+          json = JSON.parse(response.body)
+          expect(json['error']).to eq("You cannot upload more than #{max_files_per_user} files")
+        end
+      end
+    end
+
+    # -------------------------------------------------------------------------------
+    context 'when user is not authenticated' do
+      let(:jwt) { 'expired' }
+
+      it_behaves_like 'unauthorized'
+    end
   end
 
   # -------------------------------------------------------------------------------

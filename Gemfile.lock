@@ -291,6 +291,7 @@ GEM
     rubocop-ast (1.37.0)
       parser (>= 3.3.1.0)
     ruby-progressbar (1.13.0)
+    rubyzip (2.4.1)
     securerandom (0.4.1)
     shellany (0.0.1)
     sprockets (4.2.1)
@@ -333,6 +334,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  activestorage
   bootsnap
   debug
   devise (~> 4.9)
@@ -349,6 +351,7 @@ DEPENDENCIES
   rails (~> 7.1.5, >= 7.1.5.1)
   rspec-rails (~> 7.1)
   rubocop (~> 1.70)
+  rubyzip
   sprockets-rails
   stimulus-rails
   timecop (~> 0.9.10)

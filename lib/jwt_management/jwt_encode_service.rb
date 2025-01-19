@@ -3,6 +3,7 @@ module JwtManagement
     SECRET_KEY = Rails.application.secret_key_base
     HASHING_STRATEGY = 'HS256'
 
+    # -------------------------------------------------------------------------------
     def call(payload:, expire_at: 24.hours.from_now)
       return { error: 'Payload can\'t be blank' } if payload.blank?
       return { error: 'Expire time can\'t be blank' } if expire_at.blank?

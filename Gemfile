@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 ruby '3.2.2'
 
+gem 'activestorage'
 gem 'bootsnap', require: false
 gem 'devise', '~> 4.9'
 gem 'importmap-rails'
@@ -11,6 +12,7 @@ gem 'mysql2', '~> 0.5'
 gem 'prefixed_ids'
 gem 'puma', '>= 5.0'
 gem 'rails', '~> 7.1.5', '>= 7.1.5.1'
+gem 'rubyzip'
 gem 'sprockets-rails'
 gem 'stimulus-rails'
 gem 'turbo-rails'
