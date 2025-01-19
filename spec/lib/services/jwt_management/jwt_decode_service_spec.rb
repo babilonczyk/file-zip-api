@@ -6,7 +6,7 @@ RSpec.describe JwtManagement::JwtDecodeService do
 
   let!(:jwt) { JwtManagement::JwtEncodeService.new.call(payload:, expire_at:)[:jwt] }
 
-  subject { described_class.new.call(jwt) }
+  subject { described_class.new.call(jwt:) }
 
   before do
     Timecop.freeze
