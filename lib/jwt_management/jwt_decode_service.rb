@@ -3,7 +3,7 @@ module JwtManagement
     SECRET_KEY = Rails.application.secret_key_base
     HASHING_STRATEGY = 'HS256'
 
-    def call(jwt)
+    def call(jwt:)
       return { error: 'Token can\'t be blank' } if jwt.blank?
 
       data = JWT.decode(jwt, SECRET_KEY, HASHING_STRATEGY)

@@ -7,13 +7,18 @@ module Api
 
       # ----------------------------------------------
       def authorize_request
-        # TODO: get Authorization header from request
-        # and check if it is valid.
+        header = request.headers['Authorization']
+        jwt = header.split(' ').last if header
 
-        # TODO: if not valid, return 401 Unauthorized
-        # Else assign @current_user
+        begin
+          payload = JwtManagement::JwtDecodeService.new.call(jwt: jwt)[:payload]
 
-        @current_user = nil
+          return render json: { error: 'Unauthorized' }, status: :unauthorized if payload.nil?
+
+          @current_user = User.find(payload[:user_id])
+        rescue JWT::DecodeError
+          render json: { error: 'Unauthorized' }, status: :unauthorized
+        end
       end
     end
   end
