@@ -20,7 +20,9 @@ group :development, :test do
   gem 'factory_bot_rails', '~> 6.4', '>= 6.4.4'
   gem 'guard'
   gem 'guard-rspec', '~> 4.7.3'
+  gem 'pry', '~> 0.15.0'
   gem 'rspec-rails', '~> 7.1'
+  gem 'timecop', '~> 0.9.10'
 end
 
 group :development do
