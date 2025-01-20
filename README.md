@@ -25,18 +25,10 @@ bin/rails db:create
 rails s
 ```
 
-## Requirements
+## Docs
 
-REST API that enables users to:
+```sh
+rails s
 
-1. Log in/Log out
-2. Upload individual files, zip them and share download link to them with a password (can't be stored in db)
-3. List uploaded files, with a links to their download
-
-Things to consider:
-
-1. How many files can be uploaded? Limit? Allow deleting them?
-
-2. Where do we store the files?
-
-3. Authentication? JWT, but what strategy is best here
+# localhost:3000/api/v1/docs
+```
