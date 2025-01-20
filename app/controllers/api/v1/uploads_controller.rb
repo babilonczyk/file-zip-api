@@ -24,7 +24,7 @@ module Api
 
       # ----------------------------------------------
       def create
-        return render json: { error: 'File not found' }, status: :not_found if params[:file].nil?
+        return render json: { error: 'File can\'t be blank' }, status: :bad_request if params[:file].blank?
         return render json: { error: 'Name can\'t be blank' }, status: :bad_request if params[:name].blank?
 
         file = params[:file]

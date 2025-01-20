@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'swagger_helper'
 
 RSpec.describe Api::V1::UploadsController, type: :request do
   let!(:user) { create(:user) }
@@ -84,9 +85,9 @@ RSpec.describe Api::V1::UploadsController, type: :request do
         it 'returns an error' do
           subject
 
-          expect(response).to have_http_status(:not_found)
+          expect(response).to have_http_status(:bad_request)
           json = JSON.parse(response.body)
-          expect(json['error']).to eq('File not found')
+          expect(json['error']).to eq('File can\'t be blank')
         end
       end
 
@@ -161,6 +162,131 @@ RSpec.describe Api::V1::UploadsController, type: :request do
       let(:jwt) { 'expired' }
 
       it_behaves_like 'unauthorized'
+    end
+  end
+
+  # -------------------------------------------------------------------------------
+  describe 'Swagger docs' do
+    let!(:user) { create(:user) }
+    let(:Authorization) do
+      "Bearer #{JwtManagement::JwtEncodeService.new.call(payload: { user_id: user.id, jti: user.jti })[:jwt]}"
+    end
+
+    # ---------------------------------------------------------------------------
+    path '/api/v1/files' do
+      get 'Retrieve all files for authenticated user' do
+        tags 'Uploads'
+        produces 'application/json'
+        security [bearer_auth: []]
+
+        parameter name: :Authorization, in: :header, schema: {
+          type: :string,
+          example: 'Bearer <YOUR_JWT_TOKEN>'
+        }, required: true, description: 'Bearer token for authorization'
+
+        response '200', 'Returns list of files' do
+          run_test!
+        end
+
+        response '401', 'Unauthorized' do
+          let(:Authorization) { 'Bearer invalid_token' }
+          run_test!
+        end
+      end
+    end
+
+    # -------------------------------------------------------------------------
+    path '/api/v1/files' do
+      let!(:user) { create(:user) }
+      let(:Authorization) do
+        "Bearer #{JwtManagement::JwtEncodeService.new.call(payload: { user_id: user.id, jti: user.jti })[:jwt]}"
+      end
+      let(:file) { fixture_file_upload('spec/fixtures/files/sample.txt', 'text/plain') }
+      let(:name) { 'test_zip' }
+
+      post 'Create a new file upload' do
+        tags 'Uploads'
+        security [bearer_auth: []]
+        consumes 'multipart/form-data'
+
+        parameter name: :file, in: :formData, type: :file, required: true,
+                  description: 'File to be uploaded'
+
+        parameter name: :name, in: :string, type: :string, required: true,
+                  description: 'Name (used for final zip)'
+
+        parameter name: :Authorization, in: :header, schema: {
+          type: :string,
+          example: 'Bearer <YOUR_JWT_TOKEN>'
+        }, required: true, description: 'Bearer token for authorization'
+
+        response '201', 'File created' do
+          run_test!
+        end
+
+        response '401', 'Unauthorized' do
+          let(:Authorization) { 'Bearer invalid_token' }
+
+          run_test!
+        end
+
+        response '400', 'File is missing' do
+          let(:file) { nil }
+
+          run_test!
+        end
+
+        response '400', 'Name is missing' do
+          let(:name) { nil }
+
+          run_test!
+        end
+
+        response '422', 'Upload limit or validation error' do
+          let!(:files) { create_list(:upload, Api::V1::UploadsController::MAX_FILES_PER_USER, user: user) }
+
+          run_test!
+        end
+      end
+    end
+
+    # ---------------------------------------------------------------------------
+    path '/api/v1/files/{idx}' do
+      let!(:user) { create(:user) }
+      let!(:file) { create(:upload, user: user) }
+      let(:Authorization) do
+        "Bearer #{JwtManagement::JwtEncodeService.new.call(payload: { user_id: user.id, jti: user.jti })[:jwt]}"
+      end
+      let(:idx) { file.prefix_id }
+
+      delete 'Delete a file by its prefix ID' do
+        tags 'Uploads'
+        produces 'application/json'
+        security [bearer_auth: []]
+
+        parameter name: :idx, in: :path, type: :string, required: true, description: 'File prefix ID'
+
+        parameter name: :Authorization, in: :header, schema: {
+          type: :string,
+          example: 'Bearer <YOUR_JWT_TOKEN>'
+        }, required: true, description: 'Bearer token for authorization'
+
+        response '200', 'File deleted successfully' do
+          run_test!
+        end
+
+        response '401', 'Unauthorized' do
+          let(:Authorization) { 'Bearer invalid_token' }
+
+          run_test!
+        end
+
+        response '404', 'File not found' do
+          let(:idx) { 'invalid' }
+
+          run_test!
+        end
+      end
     end
   end
 end

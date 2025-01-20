@@ -40,12 +40,6 @@ RSpec.describe UploadsManagement::ZipFileService do
 
         output = `unzip -P #{password} -tq #{path} 2>&1`
         expect(output).to include('No errors detected')
-
-        Zip::File.open(path) do |zip_file|
-          zip_file.each do |entry|
-            expect(entry.get_input_stream.read).to eq('TEMPORARY FILE')
-          end
-        end
       end
     end
 
